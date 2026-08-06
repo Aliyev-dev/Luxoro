@@ -30,6 +30,8 @@ export default function Destinations() {
 
   return (
     <section id="destinations" className="relative overflow-hidden py-28 md:py-40">
+      {/* lands the dark scroll scenes above onto the page — a no-op in dark */}
+      <div className="pointer-events-none absolute inset-x-0 top-0 h-[16vh] bg-gradient-to-b from-obsidian to-transparent" />
       <div
         className="pointer-events-none absolute inset-0 transition-all duration-1000"
         style={{
@@ -49,7 +51,11 @@ export default function Destinations() {
             <SafeGL>
               <Globe onHover={onHover} />
             </SafeGL>
-            <div className="pointer-events-none absolute inset-0 rounded-full" style={{ boxShadow: 'inset 0 0 140px 20px rgba(5,5,5,0.9)' }} />
+            {/* feathers the globe into the page — follows the active theme */}
+            <div
+              className="pointer-events-none absolute inset-0 rounded-full"
+              style={{ boxShadow: 'inset 0 0 140px 20px rgb(var(--page) / 0.9)' }}
+            />
           </div>
 
           <div className="relative">
@@ -80,7 +86,7 @@ export default function Destinations() {
 
                   <div className="mt-7 grid grid-cols-3 gap-2">
                     {shown.metrics.map((m) => (
-                      <div key={m.k} className="rounded-2xl border border-white/[0.07] bg-white/[0.02] px-3 py-3">
+                      <div key={m.k} className="rounded-2xl border border-hair/[0.07] bg-hair/[0.02] px-3 py-3">
                         <div className="text-[15px] font-semibold text-frost">{m.v}</div>
                         <div className="mt-1 text-[9px] uppercase tracking-[0.18em] text-silver/45">{m.k}</div>
                       </div>
@@ -100,7 +106,7 @@ export default function Destinations() {
                     className={`rounded-full border px-3.5 py-1.5 text-[11px] transition-all duration-500 ease-luxe ${
                       shown.name === c.name
                         ? 'border-transparent text-frost'
-                        : 'border-white/10 text-silver/55 hover:border-white/25 hover:text-frost'
+                        : 'border-hair/10 text-silver/55 hover:border-hair/25 hover:text-frost'
                     }`}
                     style={
                       shown.name === c.name

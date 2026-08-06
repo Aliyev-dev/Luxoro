@@ -3,6 +3,7 @@
 import { useMemo, useRef } from 'react';
 import { Canvas, useFrame, useThree } from '@react-three/fiber';
 import * as THREE from 'three';
+import { useTheme } from '../ThemeProvider';
 
 const VERT = /* glsl */ `
   uniform float uTime;
@@ -32,17 +33,18 @@ const VERT = /* glsl */ `
 `;
 
 const FRAG = /* glsl */ `
-  uniform vec3 uColor;
+  uniform vec3  uColor;
+  uniform float uOpacity;
   varying float vAlpha;
   void main() {
     vec2 uv = gl_PointCoord - 0.5;
     float d = length(uv);
     float a = smoothstep(0.5, 0.0, d);
-    gl_FragColor = vec4(uColor, a * a * vAlpha);
+    gl_FragColor = vec4(uColor, a * a * vAlpha * uOpacity);
   }
 `;
 
-function Dust({ count = 1400 }: { count?: number }) {
+function Dust({ count = 1400, isLight }: { count?: number; isLight: boolean }) {
   const mat = useRef<THREE.ShaderMaterial>(null);
   const { viewport } = useThree();
 
@@ -70,36 +72,49 @@ function Dust({ count = 1400 }: { count?: number }) {
       uMouse: { value: new THREE.Vector2() },
       uPixelRatio: { value: 1 },
       uColor: { value: new THREE.Color('#9fd0ff') },
+      uOpacity: { value: 1 },
     }),
     []
   );
+
+  // Additive blending adds nothing on top of a light page, so the dust has to
+  // switch to normal blending and darken to stay visible.
+  uniforms.uColor.value.set(isLight ? '#5b7a9e' : '#9fd0ff');
+  uniforms.uOpacity.value = isLight ? 0.26 : 1;
+
+  const pointer = useRef(new THREE.Vector2());
 
   useFrame((state, delta) => {
     if (!mat.current) return;
     uniforms.uTime.value += delta;
     uniforms.uPixelRatio.value = Math.min(state.gl.getPixelRatio(), 2);
-    uniforms.uMouse.value.lerp(
-      new THREE.Vector2(state.pointer.x * viewport.width * 0.5, state.pointer.y * viewport.height * 0.5),
-      0.06
+    pointer.current.set(
+      state.pointer.x * viewport.width * 0.5,
+      state.pointer.y * viewport.height * 0.5
     );
+    uniforms.uMouse.value.lerp(pointer.current, 0.06);
   });
 
   return (
     <points geometry={geometry} frustumCulled={false}>
       <shaderMaterial
+        // blending is baked into the program — remount rather than flip it live
+        key={isLight ? 'light' : 'dark'}
         ref={mat}
         uniforms={uniforms}
         vertexShader={VERT}
         fragmentShader={FRAG}
         transparent
         depthWrite={false}
-        blending={THREE.AdditiveBlending}
+        blending={isLight ? THREE.NormalBlending : THREE.AdditiveBlending}
       />
     </points>
   );
 }
 
 export default function ParticleField({ className = '' }: { className?: string }) {
+  const { isLight } = useTheme();
+
   return (
     <div className={`pointer-events-none ${className}`}>
       <Canvas
@@ -108,7 +123,7 @@ export default function ParticleField({ className = '' }: { className?: string }
         camera={{ position: [0, 0, 9], fov: 52 }}
         frameloop="always"
       >
-        <Dust />
+        <Dust isLight={isLight} />
       </Canvas>
     </div>
   );

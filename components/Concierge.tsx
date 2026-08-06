@@ -41,7 +41,7 @@ export default function Concierge() {
                   name={f.name}
                   type={f.type}
                   placeholder={f.ph}
-                  className="mt-1.5 w-full bg-transparent text-[14px] text-frost outline-none placeholder:text-silver/25"
+                  className="mt-1.5 w-full bg-transparent text-[14px] text-frost outline-none placeholder:text-silver/45"
                 />
               </label>
             ))}

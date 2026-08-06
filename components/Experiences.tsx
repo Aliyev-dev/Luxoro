@@ -59,8 +59,7 @@ function GlassCard({ card, i }: { card: Card; i: number }) {
 
         <div className="relative flex h-full flex-col">
           <div
-            className="grid h-11 w-11 place-items-center rounded-2xl border border-white/10 p-2.5 transition-all duration-700 group-hover:scale-110"
-            style={{ color: `rgb(${card.accent})`, boxShadow: `0 0 0 0 rgba(${card.accent},0)` }}
+            className="accent-ink grid h-11 w-11 place-items-center rounded-2xl border border-hair/10 p-2.5 transition-all duration-700 group-hover:scale-110"
           >
             {card.icon}
           </div>
@@ -70,8 +69,8 @@ function GlassCard({ card, i }: { card: Card; i: number }) {
 
           <div className="mt-7 flex items-center justify-between">
             <span
-              className="rounded-full px-2.5 py-1 text-[10px] tracking-[0.14em]"
-              style={{ background: `rgba(${card.accent},0.12)`, color: `rgb(${card.accent})` }}
+              className="accent-ink rounded-full px-2.5 py-1 text-[10px] tracking-[0.14em]"
+              style={{ background: `rgba(${card.accent},0.12)` }}
             >
               {card.tag}
             </span>
