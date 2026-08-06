@@ -7,7 +7,7 @@
 A cinematic, scroll-driven website for a fictional private AI concierge —
 built to feel like an Apple keynote crossed with a luxury brand from 2035.
 
-**[▸ Live site](https://luxoro.vercel.app)**
+**[▸ Live site](https://luxoro-qpjf.vercel.app)**
 
 ![Next.js](https://img.shields.io/badge/Next.js-14.2-000?style=flat-square&logo=next.js)
 ![TypeScript](https://img.shields.io/badge/TypeScript-5.6-3178C6?style=flat-square&logo=typescript&logoColor=white)
