@@ -23,7 +23,7 @@ const PEOPLE: T[] = [
 function Avatar({ name, hue }: { name: string; hue: number }) {
   const initials = name.split(' ').map((n) => n[0]).join('');
   return (
-    <div className="relative grid h-12 w-12 shrink-0 place-items-center overflow-hidden rounded-full border border-white/12">
+    <div className="relative grid h-12 w-12 shrink-0 place-items-center overflow-hidden rounded-full border border-hair/12">
       <div
         className="absolute inset-0"
         style={{

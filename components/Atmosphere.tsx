@@ -45,8 +45,8 @@ export default function Atmosphere() {
         className="pointer-events-none fixed left-0 top-0 z-[90] hidden h-[380px] w-[380px] rounded-full md:block"
         style={{
           background:
-            'radial-gradient(circle, rgba(77,166,255,0.13), rgba(77,166,255,0.04) 42%, transparent 68%)',
-          mixBlendMode: 'screen',
+            'radial-gradient(circle, var(--halo), var(--halo-soft) 42%, transparent 68%)',
+          mixBlendMode: 'var(--halo-blend)' as React.CSSProperties['mixBlendMode'],
         }}
       />
       <div
@@ -60,14 +60,16 @@ export default function Atmosphere() {
         className="pointer-events-none fixed inset-0 z-[80]"
         style={{
           background:
-            'radial-gradient(125% 88% at 50% 42%, transparent 42%, rgba(0,0,0,0.42) 78%, rgba(0,0,0,0.82) 100%)',
+            'radial-gradient(125% 88% at 50% 42%, transparent 42%, var(--vignette) 78%, var(--vignette-edge) 100%)',
         }}
       />
 
       {/* film grain */}
       <div
-        className="pointer-events-none fixed inset-0 z-[85] opacity-[0.055] mix-blend-overlay"
+        className="pointer-events-none fixed inset-0 z-[85]"
         style={{
+          opacity: 'var(--grain-opacity)',
+          mixBlendMode: 'var(--grain-blend)' as React.CSSProperties['mixBlendMode'],
           backgroundImage:
             "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E\")",
           backgroundSize: '180px 180px',

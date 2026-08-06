@@ -27,6 +27,9 @@ export default function Preloader({ onDone }: { onDone?: () => void }) {
     const build = () => {
       w = canvas.clientWidth;
       h = canvas.clientHeight;
+      // The overlay can be measured before layout settles; getImageData throws
+      // on a zero-sized source. The observer below re-runs once it has a box.
+      if (w < 1 || h < 1) return;
       canvas.width = w * dpr;
       canvas.height = h * dpr;
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
@@ -69,8 +72,9 @@ export default function Preloader({ onDone }: { onDone?: () => void }) {
     };
 
     build();
-    const onResize = () => build();
-    window.addEventListener('resize', onResize);
+    // Observing the canvas rather than the window also covers the first layout.
+    const ro = new ResizeObserver(() => build());
+    ro.observe(canvas);
 
     let frame = 0;
     let raf = 0;
@@ -103,7 +107,9 @@ export default function Preloader({ onDone }: { onDone?: () => void }) {
       }
 
       if (frame % 3 === 0) {
-        const ratio = particles.length ? settled / particles.length : 1;
+        // No particles yet means the canvas hasn't been measured — fall back to
+        // the elapsed-time floor rather than reporting "done".
+        const ratio = particles.length ? settled / particles.length : 0;
         setProgress(Math.min(100, Math.round(Math.max(ratio * 100, (elapsed / 2400) * 100))));
       }
       raf = requestAnimationFrame(tick);
@@ -112,7 +118,7 @@ export default function Preloader({ onDone }: { onDone?: () => void }) {
 
     return () => {
       cancelAnimationFrame(raf);
-      window.removeEventListener('resize', onResize);
+      ro.disconnect();
     };
   }, []);
 
@@ -129,7 +135,7 @@ export default function Preloader({ onDone }: { onDone?: () => void }) {
     <AnimatePresence>
       {!gone && (
         <motion.div
-          className="fixed inset-0 z-[200] flex flex-col items-center justify-center bg-obsidian"
+          className="on-dark fixed inset-0 z-[200] flex flex-col items-center justify-center bg-obsidian"
           exit={{ opacity: 0, filter: 'blur(24px)', scale: 1.06 }}
           transition={{ duration: 1.1, ease: [0.16, 1, 0.3, 1] }}
         >
@@ -160,7 +166,7 @@ export default function Preloader({ onDone }: { onDone?: () => void }) {
           </div>
 
           <div className="mt-10 flex w-[240px] flex-col gap-3">
-            <div className="h-px w-full overflow-hidden bg-white/10">
+            <div className="h-px w-full overflow-hidden bg-hair/10">
               <motion.div
                 className="h-full bg-gradient-to-r from-electric/30 via-electric to-aurum"
                 animate={{ width: `${progress}%` }}

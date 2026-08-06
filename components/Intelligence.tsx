@@ -22,8 +22,8 @@ function Sparkline({ seed }: { seed: number }) {
     <svg viewBox="0 0 100 26" preserveAspectRatio="none" className="h-8 w-full">
       <defs>
         <linearGradient id={`sg${seed}`} x1="0" y1="0" x2="1" y2="0">
-          <stop offset="0%" stopColor="rgba(77,166,255,0.15)" />
-          <stop offset="100%" stopColor="rgba(77,166,255,0.95)" />
+          <stop offset="0%" stopColor="rgb(var(--electric) / 0.15)" />
+          <stop offset="100%" stopColor="rgb(var(--electric) / 0.95)" />
         </linearGradient>
       </defs>
       <polyline points={pts} fill="none" stroke={`url(#sg${seed})`} strokeWidth="1" vectorEffect="non-scaling-stroke" />
@@ -56,8 +56,8 @@ export default function Intelligence() {
         />
 
         <div className="mt-16 grid gap-4 lg:grid-cols-[0.85fr_1.15fr]">
-          {/* AI avatar silhouette */}
-          <div className="glass glass-strong glow-border relative overflow-hidden rounded-[28px] p-8">
+          {/* AI avatar silhouette — a holographic display, so it stays dark in both themes */}
+          <div className="on-dark glass glass-strong glow-border relative overflow-hidden rounded-[28px] bg-[#05070d] p-8">
             <div className="absolute inset-0 opacity-70">
               <div
                 className="absolute left-1/2 top-1/2 h-[320px] w-[320px] -translate-x-1/2 -translate-y-1/2 rounded-full animate-breathe"
@@ -133,14 +133,14 @@ export default function Intelligence() {
                   <div className="text-[10px] uppercase tracking-[0.2em] text-silver/45">{m.k}</div>
                   <span
                     className={`mt-0.5 h-1.5 w-1.5 shrink-0 rounded-full transition-all duration-700 ${
-                      tick === i ? 'bg-electric shadow-[0_0_10px_3px_rgba(77,166,255,0.7)]' : 'bg-white/20'
+                      tick === i ? 'bg-electric shadow-[0_0_10px_3px_rgba(77,166,255,0.7)]' : 'bg-hair/20'
                     }`}
                   />
                 </div>
                 <div className="mt-3 text-[19px] font-semibold text-frost">{m.v}</div>
                 <div className="mt-1 text-[11px] text-silver/50">{m.d}</div>
                 <Sparkline seed={i + 1} />
-                <div className="mt-1 h-px w-full overflow-hidden bg-white/8">
+                <div className="mt-1 h-px w-full overflow-hidden bg-hair/8">
                   <motion.div
                     className="h-full bg-gradient-to-r from-electric/40 to-electric"
                     initial={{ width: 0 }}

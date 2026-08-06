@@ -107,7 +107,7 @@ function StarField() {
 
 export default function Footer() {
   return (
-    <footer id="contact" className="relative overflow-hidden pt-36">
+    <footer id="contact" className="on-dark relative overflow-hidden pt-36">
       <div className="absolute inset-0 bg-gradient-to-b from-obsidian via-[#03060e] to-[#010204]" />
       <StarField />
 
@@ -118,6 +118,13 @@ export default function Footer() {
           background: 'radial-gradient(circle at 50% 16%, #123a72 0%, #071a3a 38%, #020610 66%)',
           boxShadow: '0 -24px 160px 24px rgba(77,166,255,0.30), inset 0 26px 70px 0 rgba(160,215,255,0.40)',
         }}
+      />
+
+      {/* lands the page onto the dark footer — must sit above the planet glow,
+          which is large enough to cover the top edge. A no-op in dark. */}
+      <div
+        className="pointer-events-none absolute inset-x-0 top-0 h-[22vh]"
+        style={{ background: 'linear-gradient(180deg, rgb(var(--seam)) 0%, transparent 100%)' }}
       />
 
       <div className="relative mx-auto w-[min(1180px,92vw)] pb-10">
@@ -142,7 +149,7 @@ export default function Footer() {
                     key={s.n}
                     href="#"
                     aria-label={s.n}
-                    className="group relative grid h-10 w-10 place-items-center rounded-full border border-white/10 text-silver/60 transition-all duration-500 ease-luxe hover:-translate-y-1 hover:border-electric/50 hover:text-frost"
+                    className="group relative grid h-10 w-10 place-items-center rounded-full border border-hair/10 text-silver/60 transition-all duration-500 ease-luxe hover:-translate-y-1 hover:border-electric/50 hover:text-frost"
                   >
                     <span className="absolute inset-0 rounded-full bg-electric/0 blur-md transition-all duration-500 group-hover:bg-electric/40" />
                     <svg viewBox="0 0 24 24" className="relative h-4 w-4" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round">
@@ -188,7 +195,7 @@ export default function Footer() {
         </div>
 
         <div className="mask-fade-x mt-14 select-none overflow-hidden">
-          <div className="display bg-gradient-to-b from-white/[0.09] to-transparent bg-clip-text text-center text-[clamp(3.5rem,15vw,13rem)] tracking-tightest text-transparent">
+          <div className="display bg-gradient-to-b from-hair/[0.09] to-transparent bg-clip-text text-center text-[clamp(3.5rem,15vw,13rem)] tracking-tightest text-transparent">
             LUXORA
           </div>
         </div>

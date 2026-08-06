@@ -38,7 +38,7 @@ export default function Hero() {
     <section
       id="top"
       ref={rootRef}
-      className="relative flex min-h-[100svh] items-center justify-center overflow-hidden"
+      className="on-dark relative flex min-h-[100svh] items-center justify-center overflow-hidden"
       style={{ ['--hx' as string]: '50%', ['--hy' as string]: '40%' }}
     >
       {/* procedural poster layer — always present */}
@@ -135,7 +135,7 @@ export default function Hero() {
           </a>
           <a href="#intelligence" className="btn-liquid glass">
             <span className="reflect" />
-            <span className="grid h-5 w-5 place-items-center rounded-full border border-white/25">
+            <span className="grid h-5 w-5 place-items-center rounded-full border border-hair/25">
               <svg viewBox="0 0 24 24" className="h-2.5 w-2.5 translate-x-[0.5px]" fill="currentColor">
                 <path d="M8 5v14l11-7z" />
               </svg>
@@ -152,7 +152,7 @@ export default function Hero() {
         className="absolute bottom-8 left-1/2 z-10 flex -translate-x-1/2 flex-col items-center gap-3"
       >
         <span className="text-[9px] tracking-wideluxe text-silver/40">SCROLL</span>
-        <span className="relative h-10 w-px overflow-hidden bg-white/10">
+        <span className="relative h-10 w-px overflow-hidden bg-hair/10">
           <motion.span
             className="absolute inset-x-0 top-0 h-4 bg-gradient-to-b from-electric to-transparent"
             animate={{ y: [-16, 40] }}

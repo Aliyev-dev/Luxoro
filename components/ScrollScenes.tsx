@@ -77,7 +77,7 @@ export default function ScrollScenes() {
   }, []);
 
   return (
-    <section ref={wrapRef} className="relative h-[100svh] overflow-hidden">
+    <section ref={wrapRef} className="on-dark relative h-[100svh] overflow-hidden">
       {SCENES.map((s) => (
         <article
           key={s.id}
@@ -123,7 +123,7 @@ export default function ScrollScenes() {
 
       <div className="pointer-events-none absolute bottom-8 right-8 z-20 hidden flex-col gap-2 md:flex">
         {SCENES.map((s) => (
-          <span key={s.id} className="h-6 w-px bg-white/12" style={{ boxShadow: `0 0 8px rgba(${s.accent},0.4)` }} />
+          <span key={s.id} className="h-6 w-px bg-hair/12" style={{ boxShadow: `0 0 8px rgba(${s.accent},0.4)` }} />
         ))}
       </div>
     </section>
