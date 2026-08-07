@@ -4,6 +4,7 @@ import { useMemo, useRef } from 'react';
 import { Canvas, useFrame, useThree } from '@react-three/fiber';
 import * as THREE from 'three';
 import { useTheme } from '../ThemeProvider';
+import { useRenderGate } from '@/hooks/useRenderGate';
 
 const VERT = /* glsl */ `
   uniform float uTime;
@@ -114,14 +115,17 @@ function Dust({ count = 1400, isLight }: { count?: number; isLight: boolean }) {
 
 export default function ParticleField({ className = '' }: { className?: string }) {
   const { isLight } = useTheme();
+  const hostRef = useRef<HTMLDivElement | null>(null);
+  const { active, still } = useRenderGate(hostRef);
 
   return (
-    <div className={`pointer-events-none ${className}`}>
+    <div ref={hostRef} className={`pointer-events-none ${className}`}>
       <Canvas
         dpr={[1, 1.75]}
         gl={{ antialias: false, alpha: true, powerPreference: 'high-performance' }}
         camera={{ position: [0, 0, 9], fov: 52 }}
-        frameloop="always"
+        // 'demand' renders one frame and then holds until something invalidates
+        frameloop={still ? 'demand' : active ? 'always' : 'demand'}
       >
         <Dust isLight={isLight} />
       </Canvas>

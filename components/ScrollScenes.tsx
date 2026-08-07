@@ -15,12 +15,25 @@ export default function ScrollScenes() {
     const wrap = wrapRef.current;
     if (!wrap) return;
 
+    // Keep the pin so every scene stays reachable, but drop the push-in, the
+    // scale and the blur — the crossfade alone carries the sequence.
+    const still = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const enter = still
+      ? { autoAlpha: 0 }
+      : { autoAlpha: 0, scale: 1.14, filter: 'blur(18px)' };
+    const shown = still
+      ? { autoAlpha: 1 }
+      : { autoAlpha: 1, scale: 1, filter: 'blur(0px)' };
+    const leave = still
+      ? { autoAlpha: 0 }
+      : { autoAlpha: 0, scale: 0.94, filter: 'blur(20px)' };
+
     const ctx = gsap.context(() => {
       const panels = gsap.utils.toArray<HTMLElement>('[data-scene]');
       const total = panels.length;
 
-      gsap.set(panels, { autoAlpha: 0, scale: 1.14, filter: 'blur(18px)' });
-      gsap.set(panels[0], { autoAlpha: 1, scale: 1, filter: 'blur(0px)' });
+      gsap.set(panels, enter);
+      gsap.set(panels[0], shown);
 
       const tl = gsap.timeline({
         scrollTrigger: {
@@ -39,21 +52,30 @@ export default function ScrollScenes() {
         const copy = panel.querySelectorAll('[data-copy] > *');
 
         // slow cinematic push-in across the whole scene
-        tl.to(art, { scale: 1.16, yPercent: -5, ease: 'none', duration: 1 }, i);
+        if (!still) tl.to(art, { scale: 1.16, yPercent: -5, ease: 'none', duration: 1 }, i);
+
         tl.fromTo(
           copy,
-          { y: 44, autoAlpha: 0, filter: 'blur(10px)' },
-          { y: 0, autoAlpha: 1, filter: 'blur(0px)', stagger: 0.06, duration: 0.28, ease: 'power2.out' },
+          still ? { autoAlpha: 0 } : { y: 44, autoAlpha: 0, filter: 'blur(10px)' },
+          still
+            ? { autoAlpha: 1, stagger: 0.06, duration: 0.28 }
+            : { y: 0, autoAlpha: 1, filter: 'blur(0px)', stagger: 0.06, duration: 0.28, ease: 'power2.out' },
           i
         );
-        tl.to(copy, { y: -34, autoAlpha: 0, filter: 'blur(8px)', duration: 0.22, ease: 'power2.in' }, i + 0.74);
+        tl.to(
+          copy,
+          still
+            ? { autoAlpha: 0, duration: 0.22 }
+            : { y: -34, autoAlpha: 0, filter: 'blur(8px)', duration: 0.22, ease: 'power2.in' },
+          i + 0.74
+        );
 
         if (i < total - 1) {
-          tl.to(panel, { autoAlpha: 0, scale: 0.94, filter: 'blur(20px)', duration: 0.34, ease: 'power2.inOut' }, i + 0.66);
+          tl.to(panel, { ...leave, duration: 0.34, ease: 'power2.inOut' }, i + 0.66);
           tl.fromTo(
             panels[i + 1],
-            { autoAlpha: 0, scale: 1.14, filter: 'blur(18px)' },
-            { autoAlpha: 1, scale: 1, filter: 'blur(0px)', duration: 0.34, ease: 'power2.inOut' },
+            enter,
+            { ...shown, duration: 0.34, ease: 'power2.inOut' },
             i + 0.66
           );
         }

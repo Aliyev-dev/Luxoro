@@ -4,6 +4,7 @@ import { useMemo, useRef, useState } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
 import * as THREE from 'three';
 import { CITIES, ROUTES, type City } from '@/lib/cities';
+import { useRenderGate } from '@/hooks/useRenderGate';
 
 const RADIUS = 2;
 
@@ -236,14 +237,21 @@ function Earth({ onHover }: { onHover: (c: City | null) => void }) {
 }
 
 export default function Globe({ onHover }: { onHover: (c: City | null) => void }) {
+  const hostRef = useRef<HTMLDivElement | null>(null);
+  const { active, still } = useRenderGate(hostRef);
+
   return (
-    <Canvas
-      dpr={[1, 1.75]}
-      gl={{ antialias: true, alpha: true, powerPreference: 'high-performance' }}
-      camera={{ position: [0, 0.6, 6.2], fov: 42 }}
-    >
-      <ambientLight intensity={0.6} />
-      <Earth onHover={onHover} />
-    </Canvas>
+    <div ref={hostRef} className="h-full w-full">
+      <Canvas
+        dpr={[1, 1.75]}
+        gl={{ antialias: true, alpha: true, powerPreference: 'high-performance' }}
+        camera={{ position: [0, 0.6, 6.2], fov: 42 }}
+        // Stops the globe spinning while it is scrolled past or the tab is hidden
+        frameloop={still || !active ? 'demand' : 'always'}
+      >
+        <ambientLight intensity={0.6} />
+        <Earth onHover={onHover} />
+      </Canvas>
+    </div>
   );
 }
