@@ -12,6 +12,7 @@ import Destinations from '@/components/Destinations';
 import Intelligence from '@/components/Intelligence';
 import Experiences from '@/components/Experiences';
 import Testimonials from '@/components/Testimonials';
+import ScrollGem from '@/components/ScrollGem';
 import Concierge from '@/components/Concierge';
 import Footer from '@/components/Footer';
 import SafeGL from '@/components/SafeGL';
@@ -40,6 +41,7 @@ export default function Page() {
           <Intelligence />
           <Experiences />
           <Testimonials />
+          <ScrollGem />
           <Concierge />
           <Footer />
         </main>
