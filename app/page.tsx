@@ -2,6 +2,7 @@
 
 import dynamic from 'next/dynamic';
 import { useState } from 'react';
+import { MotionConfig } from 'framer-motion';
 import SmoothScroll from '@/components/SmoothScroll';
 import Preloader from '@/components/Preloader';
 import Navbar from '@/components/Navbar';
@@ -23,7 +24,11 @@ export default function Page() {
   const [ready, setReady] = useState(false);
 
   return (
-    <>
+    // One switch for every framer-motion animation on the page: with
+    // reducedMotion="user" it drops transform animation for anyone whose OS
+    // asks for it. The CSS rule in globals.css cannot do this — framer and
+    // GSAP animate via rAF, not CSS transitions.
+    <MotionConfig reducedMotion="user">
       <Preloader onDone={() => setReady(true)} />
       <Atmosphere />
       <Navbar />
@@ -46,6 +51,6 @@ export default function Page() {
           <Footer />
         </main>
       </SmoothScroll>
-    </>
+    </MotionConfig>
   );
 }

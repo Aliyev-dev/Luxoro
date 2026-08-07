@@ -24,6 +24,7 @@ function StarField() {
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
 
+    const still = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     const dpr = Math.min(window.devicePixelRatio || 1, 2);
     let w = 0;
     let h = 0;
@@ -46,7 +47,29 @@ function StarField() {
       }));
     };
 
+    const paint = () => {
+      ctx.clearRect(0, 0, w, h);
+      for (const s of stars) {
+        ctx.beginPath();
+        ctx.fillStyle = `rgba(220,235,255,${s.a})`;
+        ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+        ctx.fill();
+      }
+    };
+
     resize();
+
+    // A still field of stars, no twinkle and no shooting stars.
+    if (still) {
+      paint();
+      const onResizeStill = () => {
+        resize();
+        paint();
+      };
+      window.addEventListener('resize', onResizeStill);
+      return () => window.removeEventListener('resize', onResizeStill);
+    }
+
     window.addEventListener('resize', resize);
 
     let raf = 0;

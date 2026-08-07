@@ -17,6 +17,9 @@ export default function Preloader({ onDone }: { onDone?: () => void }) {
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
 
+    // Particles start off-screen and fly in. That is exactly the kind of motion
+    // reduced-motion asks us to skip, so they start settled instead.
+    const still = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     const dpr = Math.min(window.devicePixelRatio || 1, 2);
     let w = 0;
     let h = 0;
@@ -56,8 +59,8 @@ export default function Preloader({ onDone }: { onDone?: () => void }) {
             const a = Math.random() * Math.PI * 2;
             const r = Math.max(w, h) * (0.5 + Math.random() * 0.7);
             next.push({
-              x: w / 2 + Math.cos(a) * r,
-              y: h / 2 + Math.sin(a) * r,
+              x: still ? x : w / 2 + Math.cos(a) * r,
+              y: still ? y : h / 2 + Math.sin(a) * r,
               tx: x,
               ty: y,
               vx: 0,
@@ -110,7 +113,8 @@ export default function Preloader({ onDone }: { onDone?: () => void }) {
         // No particles yet means the canvas hasn't been measured — fall back to
         // the elapsed-time floor rather than reporting "done".
         const ratio = particles.length ? settled / particles.length : 0;
-        setProgress(Math.min(100, Math.round(Math.max(ratio * 100, (elapsed / 2400) * 100))));
+        const floor = elapsed / (still ? 500 : 2400);
+        setProgress(Math.min(100, Math.round(Math.max(ratio * 100, floor * 100))));
       }
       raf = requestAnimationFrame(tick);
     };
