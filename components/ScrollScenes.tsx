@@ -18,15 +18,17 @@ export default function ScrollScenes() {
     // Keep the pin so every scene stays reachable, but drop the push-in, the
     // scale and the blur — the crossfade alone carries the sequence.
     const still = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    const enter = still
-      ? { autoAlpha: 0 }
-      : { autoAlpha: 0, scale: 1.14, filter: 'blur(18px)' };
-    const shown = still
-      ? { autoAlpha: 1 }
-      : { autoAlpha: 1, scale: 1, filter: 'blur(0px)' };
-    const leave = still
-      ? { autoAlpha: 0 }
-      : { autoAlpha: 0, scale: 0.94, filter: 'blur(20px)' };
+
+    /**
+     * These panels are full-viewport. Animating `filter: blur()` on them meant
+     * re-rasterising the whole scene every scrub frame — measured at roughly
+     * half of all dropped frames on the page. Opacity and scale are handled by
+     * the compositor, so the crossfade costs almost nothing; the blur stays on
+     * the copy block below, which is small enough to be cheap.
+     */
+    const enter = still ? { autoAlpha: 0 } : { autoAlpha: 0, scale: 1.14 };
+    const shown = still ? { autoAlpha: 1 } : { autoAlpha: 1, scale: 1 };
+    const leave = still ? { autoAlpha: 0 } : { autoAlpha: 0, scale: 0.94 };
 
     const ctx = gsap.context(() => {
       const panels = gsap.utils.toArray<HTMLElement>('[data-scene]');
@@ -34,6 +36,22 @@ export default function ScrollScenes() {
 
       gsap.set(panels, enter);
       gsap.set(panels[0], shown);
+
+      let live = -1;
+      /**
+       * Drives both the accent colour and which scene is allowed to animate.
+       * Reading it off the pinned timeline's own progress rather than separate
+       * triggers: a trigger anchored to a pinned element resolves against a
+       * shifting coordinate space, and the per-panel ones this replaces never
+       * fired past the first scene.
+       */
+      const setLive = (progress: number) => {
+        const i = Math.min(total - 1, Math.max(0, Math.floor(progress * total)));
+        if (i === live) return;
+        live = i;
+        panels.forEach((p, n) => p.toggleAttribute('data-live', n === i));
+        document.documentElement.style.setProperty('--accent', SCENES[i].accent);
+      };
 
       const tl = gsap.timeline({
         scrollTrigger: {
@@ -44,8 +62,12 @@ export default function ScrollScenes() {
           pin: true,
           anticipatePin: 1,
           invalidateOnRefresh: true,
+          onUpdate: (self) => setLive(self.progress),
+          onRefresh: (self) => setLive(self.progress),
         },
       });
+
+      setLive(0);
 
       panels.forEach((panel, i) => {
         const art = panel.querySelector('[data-art]');
@@ -81,18 +103,6 @@ export default function ScrollScenes() {
         }
       });
 
-      // accent lighting follows the active scene
-      panels.forEach((panel, i) => {
-        ScrollTrigger.create({
-          trigger: wrap,
-          start: () => `top+=${i * window.innerHeight * 1.1} top`,
-          end: () => `top+=${(i + 1) * window.innerHeight * 1.1} top`,
-          onToggle: (self) => {
-            if (!self.isActive) return;
-            document.documentElement.style.setProperty('--accent', SCENES[i].accent);
-          },
-        });
-      });
     }, wrap);
 
     return () => ctx.revert();

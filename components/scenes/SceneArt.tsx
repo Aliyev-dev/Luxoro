@@ -30,7 +30,9 @@ function Island() {
       />
       <div
         className="absolute left-1/2 top-[34%] h-[46vw] w-[46vw] -translate-x-1/2 -translate-y-1/2 rounded-full animate-breathe"
-        style={{ background: 'radial-gradient(circle,rgba(255,214,170,0.42),transparent 62%)', filter: 'blur(30px)' }}
+        // No blur filter: the gradient's own falloff gives the same haze without
+        // re-rasterising a large layer on every animation frame.
+        style={{ background: 'radial-gradient(circle,rgba(255,214,170,0.40),transparent 72%)' }}
       />
       <svg className="absolute inset-x-0 bottom-0 h-[62%] w-full" viewBox="0 0 1440 600" preserveAspectRatio="none">
         <defs>
@@ -73,7 +75,6 @@ function Hypercar() {
             left: '-30%',
             width: `${30 + ((i * 17) % 60)}%`,
             background: `linear-gradient(90deg,transparent,rgba(255,${120 + i * 4},90,${0.1 + (i % 5) * 0.09}),transparent)`,
-            filter: 'blur(1px)',
             animation: `drift ${5 + (i % 6)}s linear infinite`,
             animationDelay: `${i * 0.19}s`,
           }}
@@ -153,7 +154,6 @@ function Penthouse() {
             <stop offset="38%" stopColor="rgba(255,255,255,0)" />
             <stop offset="72%" stopColor="rgba(196,178,255,0.14)" />
             <stop offset="100%" stopColor="rgba(255,255,255,0)" />
-            <animate attributeName="x1" values="-1;1;-1" dur="12s" repeatCount="indefinite" />
           </linearGradient>
         </defs>
       </svg>
@@ -207,8 +207,7 @@ function Megacity() {
         className="absolute inset-0 animate-drift"
         style={{
           background:
-            'radial-gradient(40% 30% at 22% 62%,rgba(255,60,180,0.30),transparent 70%),radial-gradient(36% 28% at 78% 54%,rgba(60,220,255,0.26),transparent 70%)',
-          filter: 'blur(20px)',
+            'radial-gradient(44% 34% at 22% 62%,rgba(255,60,180,0.28),transparent 78%),radial-gradient(40% 32% at 78% 54%,rgba(60,220,255,0.24),transparent 78%)',
         }}
       />
       <svg className="absolute inset-x-0 bottom-0 h-[70%] w-full" viewBox="0 0 1440 620" preserveAspectRatio="none">
@@ -240,7 +239,6 @@ function Megacity() {
             left: '-15%',
             width: `${40 + ((i * 13) % 40)}px`,
             background: i % 2 ? 'rgba(255,90,190,0.9)' : 'rgba(90,225,255,0.9)',
-            filter: 'blur(1px)',
             animation: `drift ${3.4 + (i % 5) * 0.7}s linear infinite`,
             animationDelay: `${i * 0.4}s`,
           }}

@@ -182,8 +182,11 @@ html.lenis, html.lenis body { height: auto; }
         rgb(var(--glass-tint) / var(--glass-alpha)) 42%,
         rgb(var(--glass-tint) / calc(var(--glass-alpha) * 0.35)) 100%
       );
-    backdrop-filter: blur(26px) saturate(180%);
-    -webkit-backdrop-filter: blur(26px) saturate(180%);
+    /* Backdrop blur cost climbs with the radius, and this page carries twenty
+       of these over a WebGL canvas. 14px is close to indistinguishable from
+       26px here and measurably cheaper to scroll. */
+    backdrop-filter: blur(14px) saturate(170%);
+    -webkit-backdrop-filter: blur(14px) saturate(170%);
     border: 1px solid rgb(var(--glass-stroke) / var(--stroke-alpha));
     box-shadow:
       0 1px 0 0 var(--edge-top) inset,
@@ -230,8 +233,8 @@ html.lenis, html.lenis body { height: auto; }
   .glass > * { position: relative; z-index: 2; }
 
   .glass-strong {
-    backdrop-filter: blur(44px) saturate(200%);
-    -webkit-backdrop-filter: blur(44px) saturate(200%);
+    backdrop-filter: blur(22px) saturate(190%);
+    -webkit-backdrop-filter: blur(22px) saturate(190%);
   }
 
   /* animated conic border */
@@ -257,11 +260,16 @@ html.lenis, html.lenis body { height: auto; }
     mask-composite: exclude;
     opacity: 0;
     transition: opacity 0.55s cubic-bezier(0.16, 1, 0.3, 1);
-    animation: spin-angle 5s linear infinite;
     z-index: 3;
     pointer-events: none;
   }
-  .glow-border:hover::before { opacity: 1; }
+  /* The sweep is only ever visible on hover, but running it unconditionally
+     kept a registered-property animation ticking on every glass card on the
+     page at once. Start it when it can actually be seen. */
+  .glow-border:hover::before {
+    opacity: 1;
+    animation: spin-angle 5s linear infinite;
+  }
 
   @property --angle {
     syntax: '<angle>';
@@ -377,6 +385,16 @@ html.lenis, html.lenis body { height: auto; }
     color: color-mix(in srgb, rgba(var(--accent), 1) 52%, #05070c);
   }
   :root.light .on-dark .accent-ink { color: rgba(var(--accent), 1); }
+}
+
+/**
+ * All five scroll scenes stay mounted so GSAP can crossfade between them, but
+ * a hidden scene has no reason to keep its procedural art animating. Only the
+ * panel ScrollTrigger marks live is allowed to run.
+ */
+[data-scene]:not([data-live]) [data-art] *,
+[data-scene]:not([data-live]) [data-art] {
+  animation-play-state: paused !important;
 }
 
 @layer utilities {

@@ -1,5 +1,6 @@
 'use client';
 
+import { useEffect, useRef, useState } from 'react';
 import { motion } from 'framer-motion';
 import SectionHeading from './SectionHeading';
 
@@ -37,6 +38,21 @@ function Avatar({ name, hue }: { name: string; hue: number }) {
 }
 
 export default function Testimonials() {
+  const railRef = useRef<HTMLDivElement | null>(null);
+  const [running, setRunning] = useState(false);
+
+  // Translating a rail of backdrop-filtered cards re-blurs each one every
+  // frame, so it should only move while somebody can see it.
+  useEffect(() => {
+    const el = railRef.current;
+    if (!el) return;
+    const io = new IntersectionObserver(([e]) => setRunning(e.isIntersecting), {
+      rootMargin: '10% 0px',
+    });
+    io.observe(el);
+    return () => io.disconnect();
+  }, []);
+
   return (
     <section className="relative overflow-hidden py-28 md:py-40">
       <div className="mx-auto w-[min(1180px,92vw)]">
@@ -47,12 +63,12 @@ export default function Testimonials() {
         />
       </div>
 
-      <div className="mask-fade-x relative mt-16">
+      <div ref={railRef} className="mask-fade-x relative mt-16">
         {[0, 1].map((row) => (
           <motion.div
             key={row}
             className="flex w-max gap-4 py-2"
-            animate={{ x: row === 0 ? ['0%', '-50%'] : ['-50%', '0%'] }}
+            animate={running ? { x: row === 0 ? ['0%', '-50%'] : ['-50%', '0%'] } : undefined}
             transition={{ duration: row === 0 ? 58 : 68, repeat: Infinity, ease: 'linear' }}
           >
             {[...PEOPLE, ...PEOPLE].map((p, i) => (
